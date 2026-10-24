@@ -67,7 +67,7 @@ const buatOrder = (r) => router.push({ path: '/order/baru', query: { permintaan:
   <h1>{{ auth.isAdmin ? 'Permintaan jemput' : 'Jemput cucian' }}</h1>
 
   <form v-if="!auth.isAdmin" class="form card" @submit.prevent="kirim">
-    <h3>Ajukan permintaan jemput</h3>
+    <h2 class="h-sub">Ajukan permintaan jemput</h2>
     <p class="hint">Foto pakaian kotor membantu petugas mencatat kondisi awal, jadi lebih mudah dibuktikan kalau ada barang hilang atau rusak.</p>
     <div class="grid2">
       <label>Tanggal jemput <input type="date" v-model="form.waktu_jemput" :min="today" required /></label>

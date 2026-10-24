@@ -24,7 +24,7 @@ async function daftar() {
 </script>
 
 <template>
-  <div class="auth">
+  <main class="auth">
     <section class="auth-art">
       <h1>Daftar penghuni</h1>
       <p>Satu akun untuk memantau semua cucianmu selama tinggal di asrama.</p>
@@ -48,5 +48,5 @@ async function daftar() {
         <p class="alt">Sudah punya akun? <RouterLink to="/auth/login">Masuk</RouterLink></p>
       </form>
     </section>
-  </div>
+  </main>
 </template>

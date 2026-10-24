@@ -1,7 +1,7 @@
 :root {
   --cream: #f6f1e3; --cream-2: #ece4cf; --paper: #fffdf6;
   --sage-50: #eef3e8; --sage-100: #dde8d4; --sage-300: #b2c6a7; --sage-500: #7d9b79; --sage-700: #4f6d4c; --sage-900: #263a2a;
-  --muted: #5f6b59; --line: #ddd5bd;
+  --muted: #566150; --line: #ddd5bd;
   --late: #a64736; --late-soft: #f4e0d8;
 }
 * { box-sizing: border-box; }
@@ -152,3 +152,6 @@ input, select { font: inherit; color: inherit; background: #fff; border: 1px sol
 .chip.on b { color: #fff; }
 .list li.mine { background: var(--sage-50); box-shadow: inset 4px 0 0 var(--sage-700); }
 .me { margin-left: auto; font-weight: 700; color: var(--sage-700) !important; }
+
+h2.h-sub { font-size: 1.05rem; margin: 0 0 .25rem; }
+main.auth { max-width: none; margin: 0; padding: 0; }

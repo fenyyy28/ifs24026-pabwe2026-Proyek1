@@ -38,7 +38,7 @@ async function simpan() {
   <h1>Order baru</h1>
   <p v-if="!users.length" class="empty">Belum ada penghuni terdaftar. Penghuni mendaftar sendiri lewat halaman Daftar.</p>
   <section v-if="permintaan" class="card">
-    <h3>Dari permintaan jemput {{ permintaan.nama }}</h3>
+    <h2 class="h-sub">Dari permintaan jemput {{ permintaan.nama }}</h2>
     <p>{{ permintaan.catatan }} <small class="muted">(jemput {{ tgl(permintaan.waktu_jemput) }})</small></p>
     <PhotoGallery v-if="permintaan.foto.length" :fotos="permintaan.foto" />
     <p class="hint">Catat pakaian satu per satu di bawah. Foto ini otomatis tersimpan di order sebagai kondisi awal.</p>

@@ -21,7 +21,7 @@ async function masuk() {
 </script>
 
 <template>
-  <div class="auth">
+  <main class="auth">
     <section class="auth-art">
       <h1>LaundryTrack Asrama</h1>
       <p>Pantau cucianmu dari kamar, tanpa bolak-balik ke ruang laundry.</p>
@@ -44,5 +44,5 @@ async function masuk() {
         <p class="demo">Akun contoh: <b>budi</b> / budi123 (penghuni) · <b>petugas</b> / petugas123 (petugas laundry)</p>
       </form>
     </section>
-  </div>
+  </main>
 </template>
