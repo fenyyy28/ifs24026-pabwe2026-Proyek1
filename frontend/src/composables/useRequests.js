@@ -1,39 +1,44 @@
 // Logika permintaan jemput: daftar, form pengajuan, foto, dan tindakan petugas.
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
 import { listRequests, createRequest, deleteRequest, reviewRequest } from '../services/requestService'
 import { compressImage } from '../utils/image'
-import { validateRequestForm } from '../utils/validators'
+import { validateRequestForm, hasErrors } from '../utils/validators'
+import { bersihkan } from '../utils/sanitize'
+import { requireAdmin } from '../utils/guard'
+import { konfirmasi } from '../utils/dialog'
+import { useAsyncAction } from './useAsyncAction'
 import { MAX_PHOTOS } from '../constants'
 
 export function useRequests() {
+  const router = useRouter()
   const today = new Date().toISOString().slice(0, 10)
   const list = ref([])
-  const error = ref('')
   const sukses = ref(false)
+  const errors = ref({})
   const loading = ref(false)
   const form = ref({ waktu_jemput: today, catatan: '' })
   const files = ref([]) // { file, url }
   const tanggapan = ref({})
+  const { error, run } = useAsyncAction()
 
-  async function load() {
-    try { list.value = await listRequests() } catch (e) { error.value = e.message }
-  }
+  const fetchList = async () => { list.value = await listRequests() }
+  const load = () => run(fetchList)
 
   function clearPhotos() {
     files.value.forEach((f) => URL.revokeObjectURL(f.url))
     files.value = []
   }
 
-  async function pilih(e) {
-    error.value = ''
+  const pilih = (e) => run(async () => {
     const picked = [...e.target.files]
     e.target.value = ''
     for (const f of picked) {
-      if (files.value.length >= MAX_PHOTOS) { error.value = `Maksimal ${MAX_PHOTOS} foto per permintaan`; break }
+      if (files.value.length >= MAX_PHOTOS) throw new Error(`Maksimal ${MAX_PHOTOS} foto per permintaan`)
       const small = await compressImage(f)
       files.value.push({ file: small, url: URL.createObjectURL(small) })
     }
-  }
+  })
 
   function buang(i) {
     URL.revokeObjectURL(files.value[i].url)
@@ -42,29 +47,35 @@ export function useRequests() {
 
   async function kirim() {
     error.value = ''; sukses.value = false
-    const invalid = validateRequestForm(form.value, today)
-    if (invalid) { error.value = invalid; return }
+    const data = { ...form.value, catatan: bersihkan(form.value.catatan) }
+    errors.value = validateRequestForm(data, today)
+    if (hasErrors(errors.value)) return
     loading.value = true
-    try {
-      await createRequest(form.value, files.value.map((f) => f.file))
+    await run(async () => {
+      await createRequest(data, files.value.map((f) => f.file))
       form.value.catatan = ''
       clearPhotos()
       sukses.value = true
-      load()
-    } catch (e) { error.value = e.message } finally { loading.value = false }
+      await fetchList()
+    })
+    loading.value = false
   }
 
-  async function batalkan(r) {
-    try { await deleteRequest(r.id); load() } catch (e) { error.value = e.message }
+  function batal(r) {
+    if (!konfirmasi('Batalkan permintaan jemput ini?')) return
+    return run(async () => { await deleteRequest(r.id); await fetchList() })
   }
 
-  async function putus(r, status) {
-    error.value = ''
-    try { await reviewRequest(r.id, status, tanggapan.value[r.id]); load() } catch (e) { error.value = e.message }
-  }
+  const putus = (r, status) => run(async () => {
+    requireAdmin()
+    await reviewRequest(r.id, status, bersihkan(tanggapan.value[r.id]))
+    await fetchList()
+  })
+
+  const buatOrder = (r) => router.push({ path: '/order/baru', query: { permintaan: r.id } })
 
   onMounted(load)
   onBeforeUnmount(clearPhotos)
 
-  return { today, list, error, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batalkan, putus }
+  return { today, list, error, errors, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batal, putus, buatOrder }
 }

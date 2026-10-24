@@ -6,11 +6,7 @@ import { auth } from '../auth'
 import OrderTag from '../components/OrderTag.vue'
 import StatusPill from '../components/StatusPill.vue'
 
-const { orders, q, status, late, error, remove } = useOrders()
-
-async function hapus(o) {
-  if (confirm(`Hapus order ${o.kode}?`)) await remove(o)
-}
+const { orders, q, status, late, error, hapus } = useOrders()
 </script>
 
 <template>

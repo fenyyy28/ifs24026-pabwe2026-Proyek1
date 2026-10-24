@@ -6,9 +6,10 @@ import { auth } from '../auth'
 import OrderTag from '../components/OrderTag.vue'
 import ProgressSteps from '../components/ProgressSteps.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
+import FieldError from '../components/FieldError.vue'
 
 const props = defineProps({ id: String })
-const { o, error, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKomplain } = useOrderDetail(() => props.id)
+const { o, error, errors, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKomplain } = useOrderDetail(() => props.id)
 </script>
 
 <template>
@@ -72,11 +73,12 @@ const { o, error, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKom
       <h3>Ada masalah dengan cucian ini?</h3>
       <div class="grid2">
         <label>Jenis masalah
-          <select v-model="komplain.jenis">
+          <select v-model="komplain.jenis" :aria-invalid="!!errors.jenis" :aria-describedby="errors.jenis ? 'err-jenis' : undefined">
             <option v-for="(l, k) in JENIS_KOMPLAIN" :key="k" :value="k">{{ l }}</option>
           </select>
+          <FieldError id="err-jenis" :message="errors.jenis" />
         </label>
-        <label>Ceritakan masalahnya <input v-model="komplain.deskripsi" placeholder="Contoh: kaos biru hanya kembali 3 dari 4" required /></label>
+        <label>Ceritakan masalahnya <input v-model="komplain.deskripsi" placeholder="Contoh: kaos biru hanya kembali 3 dari 4" required :aria-invalid="!!errors.deskripsi" :aria-describedby="errors.deskripsi ? 'err-deskripsi' : undefined" /><FieldError id="err-deskripsi" :message="errors.deskripsi" /></label>
       </div>
       <p v-if="terkirim" class="ok-text" role="status">Komplain diajukan. Pantau statusnya di halaman Komplain.</p>
       <button class="btn" type="submit">Ajukan komplain</button>

@@ -6,11 +6,7 @@ import { auth } from '../auth'
 import OrderTag from '../components/OrderTag.vue'
 import ProgressSteps from '../components/ProgressSteps.vue'
 
-const { list, draft, error, simpan, remove } = useComplaints()
-
-async function hapus(c) {
-  if (confirm('Hapus komplain ini?')) await remove(c)
-}
+const { list, draft, error, simpan, hapus } = useComplaints()
 </script>
 
 <template>

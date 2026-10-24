@@ -1,8 +1,9 @@
 <script setup>
 import { useLogin } from '../composables/useAuthForm'
 import LaundryArt from '../components/LaundryArt.vue'
+import FieldError from '../components/FieldError.vue'
 
-const { form, error, loading, masuk } = useLogin()
+const { form, error, errors, loading, masuk } = useLogin()
 </script>
 
 <template>
@@ -21,8 +22,8 @@ const { form, error, loading, masuk } = useLogin()
       <form @submit.prevent="masuk" class="form">
         <h2>Masuk</h2>
         <p class="hint">Gunakan akun yang kamu daftarkan.</p>
-        <label>Username <input id="username" name="username" v-model="form.username" autocomplete="username" required autofocus /></label>
-        <label>Kata sandi <input id="password" name="password" type="password" v-model="form.password" autocomplete="current-password" required /></label>
+        <label>Username <input id="username" name="username" v-model="form.username" autocomplete="username" required autofocus :aria-invalid="!!errors.username" :aria-describedby="errors.username ? 'err-username' : undefined" /><FieldError id="err-username" :message="errors.username" /></label>
+        <label>Kata sandi <input id="password" name="password" type="password" v-model="form.password" autocomplete="current-password" required :aria-invalid="!!errors.password" :aria-describedby="errors.password ? 'err-password' : undefined" /><FieldError id="err-password" :message="errors.password" /></label>
         <p v-if="error" class="error" role="alert">{{ error }}</p>
         <button id="btn-submit" class="btn" type="submit" :disabled="loading">{{ loading ? 'Memproses…' : 'Masuk' }}</button>
         <p class="alt">Belum punya akun? <RouterLink to="/auth/register">Daftar sebagai penghuni</RouterLink></p>

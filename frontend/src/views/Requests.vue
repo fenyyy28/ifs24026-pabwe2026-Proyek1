@@ -1,5 +1,4 @@
 <script setup>
-import { useRouter } from 'vue-router'
 import { useRequests } from '../composables/useRequests'
 import { REQ_STEPS, REQ_LABEL } from '../constants'
 import { tgl } from '../utils/format'
@@ -7,14 +6,9 @@ import { auth } from '../auth'
 import ProgressSteps from '../components/ProgressSteps.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import OrderTag from '../components/OrderTag.vue'
+import FieldError from '../components/FieldError.vue'
 
-const router = useRouter()
-const { today, list, error, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batalkan, putus } = useRequests()
-
-async function batal(r) {
-  if (confirm('Batalkan permintaan jemput ini?')) await batalkan(r)
-}
-const buatOrder = (r) => router.push({ path: '/order/baru', query: { permintaan: r.id } })
+const { today, list, error, errors, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batal, putus, buatOrder } = useRequests()
 </script>
 
 <template>
@@ -24,8 +18,8 @@ const buatOrder = (r) => router.push({ path: '/order/baru', query: { permintaan:
     <h2 class="h-sub">Ajukan permintaan jemput</h2>
     <p class="hint">Foto pakaian kotor membantu petugas mencatat kondisi awal, jadi lebih mudah dibuktikan kalau ada barang hilang atau rusak.</p>
     <div class="grid2">
-      <label>Tanggal jemput <input type="date" v-model="form.waktu_jemput" :min="today" required /></label>
-      <label>Isi cucian <input v-model="form.catatan" placeholder="Contoh: 5 kaos, 2 celana, 1 jaket" required /></label>
+      <label>Tanggal jemput <input type="date" v-model="form.waktu_jemput" :min="today" required :aria-invalid="!!errors.waktu_jemput" :aria-describedby="errors.waktu_jemput ? 'err-waktu_jemput' : undefined" /><FieldError id="err-waktu_jemput" :message="errors.waktu_jemput" /></label>
+      <label>Isi cucian <input v-model="form.catatan" placeholder="Contoh: 5 kaos, 2 celana, 1 jaket" required :aria-invalid="!!errors.catatan" :aria-describedby="errors.catatan ? 'err-catatan' : undefined" /><FieldError id="err-catatan" :message="errors.catatan" /></label>
     </div>
     <div>
       <label class="upload">

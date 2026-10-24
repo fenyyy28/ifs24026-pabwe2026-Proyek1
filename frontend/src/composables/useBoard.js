@@ -2,15 +2,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { getBoard } from '../services/orderService'
 import { STATUS } from '../constants'
+import { useAsyncAction } from './useAsyncAction'
 
 export function useBoard() {
   const rows = ref([])
-  const error = ref('')
   const filter = ref('')
+  const { error, run } = useAsyncAction()
 
-  onMounted(async () => {
-    try { rows.value = await getBoard() } catch (e) { error.value = e.message }
-  })
+  onMounted(() => run(async () => { rows.value = await getBoard() }))
 
   const tahap = computed(() => STATUS.slice(0, 4).map((s) => ({ ...s, n: rows.value.filter((r) => r.status === s.v).length })))
   const tampil = computed(() => (filter.value ? rows.value.filter((r) => r.status === filter.value) : rows.value))

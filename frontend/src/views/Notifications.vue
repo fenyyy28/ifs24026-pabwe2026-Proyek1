@@ -1,23 +1,15 @@
 <script setup>
-import { useRouter } from 'vue-router'
 import { useNotifications } from '../composables/useNotifications'
 import { tgl } from '../utils/format'
 import { auth } from '../auth'
 
-const router = useRouter()
-const { list, error, markRead, markAll } = useNotifications()
-
-async function buka(n) {
-  await markRead(n)
-  if (n.order_id) router.push('/order/' + n.order_id)
-}
-const semua = markAll
+const { list, error, buka, tandaiSemua } = useNotifications()
 </script>
 
 <template>
   <div class="row-between">
     <h1>Notifikasi</h1>
-    <button v-if="auth.unread" class="btn ghost" @click="semua">Tandai semua dibaca</button>
+    <button v-if="auth.unread" class="btn ghost" @click="tandaiSemua">Tandai semua dibaca</button>
   </div>
   <p v-if="error" class="error">{{ error }}</p>
   <p v-if="!list.length" class="empty">Belum ada notifikasi. Pemberitahuan tentang cucianmu akan muncul di sini.</p>

@@ -1,24 +1,27 @@
 // Daftar order dengan pencarian dan filter; memuat ulang otomatis saat filter berubah.
 import { ref, onMounted, watch } from 'vue'
 import { listOrders, deleteOrder } from '../services/orderService'
+import { useAsyncAction } from './useAsyncAction'
+import { requireAdmin } from '../utils/guard'
+import { konfirmasi } from '../utils/dialog'
 
 export function useOrders() {
   const orders = ref([])
   const q = ref('')
   const status = ref('')
   const late = ref(false)
-  const error = ref('')
+  const { error, run } = useAsyncAction()
 
-  async function load() {
-    try { orders.value = await listOrders({ q: q.value, status: status.value, late: late.value }) } catch (e) { error.value = e.message }
-  }
+  const fetchOrders = async () => { orders.value = await listOrders({ q: q.value, status: status.value, late: late.value }) }
+  const load = () => run(fetchOrders)
 
-  async function remove(o) {
-    try { await deleteOrder(o.id); load() } catch (e) { error.value = e.message }
+  function hapus(o) {
+    if (!konfirmasi(`Hapus order ${o.kode}?`)) return
+    return run(async () => { requireAdmin(); await deleteOrder(o.id); await fetchOrders() })
   }
 
   onMounted(load)
   watch([q, status, late], load)
 
-  return { orders, q, status, late, error, remove }
+  return { orders, q, status, late, error, hapus }
 }
