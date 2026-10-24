@@ -15,8 +15,8 @@ import Board from './views/Board.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/masuk', alias: ['/auth/login'], component: Login, meta: { public: true } },
-    { path: '/daftar', alias: ['/auth/register'], component: Register, meta: { public: true } },
+    { path: '/auth/login', alias: ['/masuk'], component: Login, meta: { public: true } },
+    { path: '/auth/register', alias: ['/daftar'], component: Register, meta: { public: true } },
     { path: '/', component: Dashboard },
     { path: '/order', component: Orders },
     { path: '/order/baru', component: OrderNew, meta: { admin: true } },
@@ -31,7 +31,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  if (!to.meta.public && !auth.token) return '/masuk'
+  if (!to.meta.public && !auth.token) return '/auth/login'
   if (to.meta.public && auth.token) return '/'
   if (to.meta.admin && !auth.isAdmin) return '/'
 })

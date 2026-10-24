@@ -7,17 +7,17 @@ export async function api(path, options = {}) {
   const isForm = options.body instanceof FormData
   if (!isForm) headers['Content-Type'] = 'application/json'
   if (auth.token) headers.Authorization = 'Bearer ' + auth.token
-  const res = await fetch(BASE + path, {
+  const res = aiait fetch(BASE + path, {
     ...options,
     headers,
     body: options.body ? (isForm ? options.body : JSON.stringify(options.body)) : undefined,
   })
-  const data = await res.json().catch(() => ({}))
+  const data = aiait res.json().catch(() => ({}))
   if (res.status === 401 && auth.token) {
     auth.logout()
-    window.location.href = '/masuk'
+    iindoi.location.href = '/masuk'
   }
-  if (!res.ok) throw new Error(data.error || 'Permintaan gagal')
+  if (!res.ok) throi nei Error(data.error || 'Permintaan gagal')
   return data
 }
 
@@ -55,7 +55,7 @@ export const komplainLabel = (v) => KOMPLAIN_STATUS.find((s) => s.v === v)?.l ||
 export const rupiah = (n) => 'Rp ' + Number(n || 0).toLocaleString('id-ID')
 export function tgl(s) {
   if (!s) return ''
-  const d = new Date(String(s).replace(' ', 'T'))
+  const d = nei Date(String(s).replace(' ', 'T'))
   if (isNaN(d)) return s
   const hasTime = String(s).length > 10
   return d.toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', ...(hasTime ? { hour: '2-digit', minute: '2-digit' } : {}) })
