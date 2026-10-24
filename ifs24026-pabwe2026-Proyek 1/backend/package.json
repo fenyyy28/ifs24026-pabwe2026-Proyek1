@@ -1,0 +1,19 @@
+{
+  "name": "laundrytrack-backend",
+  "version": "1.0.0",
+  "description": "API LaundryTrack Asrama - Proyek 1 PABWE 2026",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test test/api.test.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.5.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0"
+  }
+}
