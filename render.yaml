@@ -1,3 +1,4 @@
+# Blueprint deploy ke Render (satu layanan: API Express + tampilan Vue hasil build)
 services:
   - type: web
     name: laundrytrack-asrama

@@ -30,11 +30,24 @@ npm install
 npm run dev
 ```
 
-## Tes API
+## Tes API dan coverage
 ```bash
-cd backend && npm test
+cd backend
+npm test            # Node (node:test)
+bun run coverage    # Bun, wajib 100% baris dan fungsi (batas di backend/bunfig.toml)
 ```
+Database otomatis memakai `bun:sqlite` saat dijalankan dengan Bun dan `better-sqlite3` saat dijalankan dengan Node.
 
 ## Variabel lingkungan
 - Backend: `PORT` (default 3000), `DB_PATH`, `UPLOAD_DIR` (folder foto, default `backend/uploads`), `JWT_SECRET` (wajib diganti saat deploy)
 - Frontend: `VITE_API_URL` = URL API saat deploy (kosong saat lokal)
+
+## Deploy (Render, satu layanan)
+Backend otomatis menyajikan hasil build front-end (`frontend/dist`) jika ada, sehingga cukup satu URL.
+- Build command: `cd frontend && npm install && npm run build && cd ../backend && npm install`
+- Start command: `cd backend && npm start`
+- Env: `NODE_VERSION=22`, `JWT_SECRET=<acak>`
+- Catatan: pada paket gratis, database SQLite dan foto unggahan direset saat layanan restart.
+
+## Jenkins
+`Jenkinsfile` di root: checkout, install back-end, uji (hasil JUnit), build front-end, arsipkan `frontend/dist`.

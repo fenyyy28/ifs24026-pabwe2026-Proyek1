@@ -1,21 +1,11 @@
-const Database = require('better-sqlite3');
 const path = require('path');
 const { hashPassword } = require('./security');
 
-const file = process.env.DB_PATH || path.join(__dirname, 'laundry.db');
-const db = new Database(file);
+// Bun memakai bun:sqlite bawaan, Node memakai better-sqlite3 (API keduanya mirip).
+const Database = typeof Bun !== 'undefined' ? require('bun:sqlite').Database : require('better-sqlite3');
 
 const SCHEMA_VERSION = 3;
-// Versi lama (tanpa login) hanya berisi data contoh, jadi aman dibuat ulang.
-if (db.pragma('user_version', { simple: true }) < 2) {
-  db.pragma('foreign_keys = OFF');
-  db.exec(`DROP TABLE IF EXISTS request_photos; DROP TABLE IF EXISTS requests; DROP TABLE IF EXISTS notifications; DROP TABLE IF EXISTS status_log;
-    DROP TABLE IF EXISTS complaints; DROP TABLE IF EXISTS order_items;
-    DROP TABLE IF EXISTS orders; DROP TABLE IF EXISTS users;`);
-}
-db.pragma('foreign_keys = ON');
-
-db.exec(`
+const SCHEMA = `
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   nama TEXT NOT NULL,
@@ -86,8 +76,27 @@ CREATE TABLE IF NOT EXISTS notifications (
   dibaca INTEGER NOT NULL DEFAULT 0,
   dibuat TEXT NOT NULL DEFAULT (datetime('now','localtime'))
 );
-`);
-db.pragma(`user_version = ${SCHEMA_VERSION}`);
+`;
+
+const pragma = (d, sql) => d.exec(`PRAGMA ${sql}`);
+const userVersion = (d) => d.prepare('PRAGMA user_version').get().user_version;
+
+// Versi lama (tanpa login) hanya berisi data contoh, jadi aman dibuat ulang.
+function migrate(d) {
+  if (userVersion(d) < 2) {
+    pragma(d, 'foreign_keys = OFF');
+    d.exec(`DROP TABLE IF EXISTS request_photos; DROP TABLE IF EXISTS requests; DROP TABLE IF EXISTS notifications;
+      DROP TABLE IF EXISTS status_log; DROP TABLE IF EXISTS complaints; DROP TABLE IF EXISTS order_items;
+      DROP TABLE IF EXISTS orders; DROP TABLE IF EXISTS users;`);
+  }
+  pragma(d, 'foreign_keys = ON');
+  d.exec(SCHEMA);
+  pragma(d, `user_version = ${SCHEMA_VERSION}`);
+}
+
+const file = process.env.DB_PATH || path.join(__dirname, 'laundry.db');
+const db = new Database(file);
+migrate(db);
 
 function seed() {
   if (db.prepare('SELECT COUNT(*) c FROM users').get().c > 0) return;
@@ -124,3 +133,5 @@ function seed() {
 
 module.exports = db;
 module.exports.seed = seed;
+module.exports.migrate = migrate;
+module.exports.connect = (f) => new Database(f);

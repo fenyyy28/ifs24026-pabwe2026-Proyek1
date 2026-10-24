@@ -2,6 +2,7 @@
   "name": "ifs24026-pabwe2026-proyek1",
   "private": true,
   "scripts": {
-    "coverage": "bun run --cwd backend coverage"
+    "coverage": "cd backend && bun run coverage",
+    "test": "cd backend && npm test"
   }
 }

@@ -2,3 +2,5 @@ node_modules
 *.db
 .env
 uploads/
+test-results.xml
+coverage/

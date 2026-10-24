@@ -173,7 +173,7 @@ app.post('/api/orders', adminOnly, (req, res) => {
   const b = req.body;
   if (!b.user_id || !b.estimasi_selesai) return bad(res, 'Penghuni dan estimasi selesai wajib diisi');
   if (!db.prepare("SELECT id FROM users WHERE id=? AND role='penghuni'").get(b.user_id)) return bad(res, 'Penghuni tidak ditemukan', 404);
-  if (!Array.isArray(b.items) || b.items.length === 0 || b.items.some((i) => !i.jenis))
+  if (!Array.isArray(b.items) || b.items.length === 0 || b.items.some((i) => !i || !i.jenis))
     return bad(res, 'Minimal satu item pakaian dengan jenis terisi');
   if (b.request_id) {
     const rq = db.prepare('SELECT * FROM requests WHERE id=?').get(b.request_id);
@@ -346,9 +346,17 @@ app.patch('/api/notifications/:id/read', (req, res) => {
   res.json({ ok: true });
 });
 
+// ---------- FRONT-END (produksi: satu URL untuk API + tampilan) ----------
+const DIST = process.env.FRONTEND_DIST || path.join(__dirname, '..', 'frontend', 'dist');
+if (fs.existsSync(path.join(DIST, 'index.html'))) {
+  app.use(express.static(DIST));
+  app.get(/^\/(?!api|uploads).*/, (req, res) => res.sendFile(path.join(DIST, 'index.html')));
+}
+
 // ---------- ERROR ----------
 app.use((req, res) => bad(res, 'Endpoint tidak ditemukan', 404));
 app.use((err, req, res, next) => {
+  if (err.type === 'entity.parse.failed') return bad(res, 'Format JSON tidak valid');
   if (err instanceof UploadError) return bad(res, err.message);
   if (err.code === 'LIMIT_FILE_SIZE') return bad(res, 'Ukuran setiap foto maksimal 5 MB');
   if (err.code === 'LIMIT_FILE_COUNT' || err.code === 'LIMIT_UNEXPECTED_FILE') return bad(res, 'Maksimal 4 foto per permintaan');
