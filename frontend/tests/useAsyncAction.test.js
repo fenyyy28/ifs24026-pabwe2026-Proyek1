@@ -23,4 +23,27 @@ describe('useAsyncAction', () => {
     await run(async () => 1)
     expect(error.value).toBe('')
   })
+
+  it('loading menyala selama aksi berjalan dan mati setelah selesai, juga saat gagal', async () => {
+    const { loading, run } = useAsyncAction()
+    let selesai
+    const tunggu = new Promise((r) => { selesai = r })
+    const proses = run(() => tunggu)
+    expect(loading.value).toBe(true)
+    selesai()
+    await proses
+    expect(loading.value).toBe(false)
+    await run(async () => { throw new Error('x') })
+    expect(loading.value).toBe(false)
+  })
+  it('loading tetap menyala selama masih ada aksi lain yang berjalan', async () => {
+    const { loading, run } = useAsyncAction()
+    let a, b
+    const p1 = run(() => new Promise((r) => { a = r }))
+    const p2 = run(() => new Promise((r) => { b = r }))
+    a(); await p1
+    expect(loading.value).toBe(true)
+    b(); await p2
+    expect(loading.value).toBe(false)
+  })
 })

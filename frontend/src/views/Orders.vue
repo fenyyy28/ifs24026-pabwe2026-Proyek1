@@ -5,8 +5,9 @@ import { rupiah, tgl } from '../utils/format'
 import { auth } from '../auth'
 import OrderTag from '../components/OrderTag.vue'
 import StatusPill from '../components/StatusPill.vue'
+import LoadingState from '../components/LoadingState.vue'
 
-const { orders, q, status, late, error, hapus } = useOrders()
+const { memuat, orders, q, status, late, error, hapus } = useOrders()
 </script>
 
 <template>
@@ -23,7 +24,8 @@ const { orders, q, status, late, error, hapus } = useOrders()
     <label class="check"><input type="checkbox" v-model="late" /> Hanya yang terlambat</label>
   </div>
   <p v-if="error" class="error">{{ error }}</p>
-  <p v-if="!orders.length" class="empty">Belum ada cucian yang cocok dengan pencarian ini.</p>
+  <LoadingState :loading="memuat" />
+  <p v-if="!memuat && !orders.length" class="empty">Belum ada cucian yang cocok dengan pencarian ini.</p>
   <ul class="list">
     <li v-for="o in orders" :key="o.id">
       <RouterLink :to="'/order/' + o.id"><OrderTag :kode="o.kode" :terlambat="o.terlambat" /></RouterLink>

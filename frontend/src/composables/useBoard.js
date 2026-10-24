@@ -7,12 +7,12 @@ import { useAsyncAction } from './useAsyncAction'
 export function useBoard() {
   const rows = ref([])
   const filter = ref('')
-  const { error, run } = useAsyncAction()
+  const { error, loading: memuat, run } = useAsyncAction()
 
   onMounted(() => run(async () => { rows.value = await getBoard() }))
 
   const tahap = computed(() => STATUS.slice(0, 4).map((s) => ({ ...s, n: rows.value.filter((r) => r.status === s.v).length })))
   const tampil = computed(() => (filter.value ? rows.value.filter((r) => r.status === filter.value) : rows.value))
 
-  return { rows, error, filter, tahap, tampil }
+  return { memuat, rows, error, filter, tahap, tampil }
 }

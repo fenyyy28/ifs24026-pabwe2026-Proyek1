@@ -8,7 +8,7 @@ import { useAsyncAction } from './useAsyncAction'
 export function useNotifications() {
   const router = useRouter()
   const list = ref([])
-  const { error, run } = useAsyncAction()
+  const { error, loading: memuat, run } = useAsyncAction()
 
   async function fetchList() {
     list.value = await listNotifications()
@@ -33,5 +33,5 @@ export function useNotifications() {
 
   onMounted(load)
 
-  return { list, error, buka, tandaiSemua }
+  return { memuat, list, error, buka, tandaiSemua }
 }

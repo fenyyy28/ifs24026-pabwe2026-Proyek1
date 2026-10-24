@@ -4,15 +4,17 @@ import { rupiah, tgl } from '../utils/format'
 import { auth } from '../auth'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import FieldError from '../components/FieldError.vue'
+import LoadingState from '../components/LoadingState.vue'
 
-const { permintaan, users, error, errors, form, items, tambah, hapus, simpan } = useOrderForm()
+const { memuat, permintaan, users, error, errors, form, items, tambah, hapus, simpan } = useOrderForm()
 </script>
 
 <template>
   <p v-if="!auth.isAdmin" class="error" role="alert">Halaman ini hanya untuk petugas laundry.</p>
   <template v-else>
   <h1>Order baru</h1>
-  <p v-if="!users.length" class="empty">Belum ada penghuni terdaftar. Penghuni mendaftar sendiri lewat halaman Daftar.</p>
+  <LoadingState :loading="memuat" />
+  <p v-if="!memuat && !users.length" class="empty">Belum ada penghuni terdaftar. Penghuni mendaftar sendiri lewat halaman Daftar.</p>
   <section v-if="permintaan" class="card">
     <h2 class="h-sub">Dari permintaan jemput {{ permintaan.nama }}</h2>
     <p>{{ permintaan.catatan }} <small class="muted">(jemput {{ tgl(permintaan.waktu_jemput) }})</small></p>

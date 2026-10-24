@@ -9,7 +9,7 @@ import { bersihkan } from '../utils/sanitize'
 export function useComplaints() {
   const list = ref([])
   const draft = ref({})
-  const { error, run } = useAsyncAction()
+  const { error, loading: memuat, run } = useAsyncAction()
 
   async function fetchList() {
     list.value = await listComplaints()
@@ -31,5 +31,5 @@ export function useComplaints() {
 
   onMounted(load)
 
-  return { list, draft, error, simpan, hapus }
+  return { memuat, list, draft, error, simpan, hapus }
 }

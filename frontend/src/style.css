@@ -159,3 +159,6 @@ main.auth { max-width: none; margin: 0; padding: 0; }
 /* Pesan error per field pada form */
 .form .field-error { color: var(--late); font-weight: 600; font-size: .875rem; }
 .form input[aria-invalid="true"], .form select[aria-invalid="true"] { border-color: var(--late); }
+
+/* Indikator memuat */
+.loading { color: var(--muted); padding: .75rem 0; }

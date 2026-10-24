@@ -1,8 +1,9 @@
 <script setup>
 import { useUsers } from '../composables/useUsers'
 import { auth } from '../auth'
+import LoadingState from '../components/LoadingState.vue'
 
-const { users, error, form, ubah, batalUbah, simpan, hapus } = useUsers()
+const { memuat, users, error, form, ubah, batalUbah, simpan, hapus } = useUsers()
 </script>
 
 <template>
@@ -18,7 +19,8 @@ const { users, error, form, ubah, batalUbah, simpan, hapus } = useUsers()
     <button type="button" class="btn ghost" @click="batalUbah">Batal</button>
   </form>
   <p v-if="error" class="error">{{ error }}</p>
-  <p v-if="!users.length" class="empty">Belum ada penghuni yang mendaftar.</p>
+  <LoadingState :loading="memuat" />
+  <p v-if="!memuat && !users.length" class="empty">Belum ada penghuni yang mendaftar.</p>
   <ul class="list">
     <li v-for="u in users" :key="u.id">
       <b>{{ u.nama }}</b><span>Kamar {{ u.kamar }}</span><span>{{ u.kontak }}</span><span>@{{ u.username }}</span>

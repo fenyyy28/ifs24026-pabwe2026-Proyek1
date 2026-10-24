@@ -4,8 +4,9 @@ import { STATUS } from '../constants'
 import { tgl } from '../utils/format'
 import OrderTag from '../components/OrderTag.vue'
 import StatusPill from '../components/StatusPill.vue'
+import LoadingState from '../components/LoadingState.vue'
 
-const { rows, error, filter, tahap, tampil } = useBoard()
+const { memuat, rows, error, filter, tahap, tampil } = useBoard()
 </script>
 
 <template>
@@ -20,7 +21,8 @@ const { rows, error, filter, tahap, tampil } = useBoard()
     </button>
   </div>
 
-  <p v-if="!tampil.length" class="empty">Tidak ada cucian di tahap ini.</p>
+  <LoadingState :loading="memuat" />
+  <p v-if="!memuat && !tampil.length" class="empty">Tidak ada cucian di tahap ini.</p>
   <ul class="list">
     <li v-for="r in tampil" :key="r.kode" :class="{ mine: r.milikku }">
       <OrderTag :kode="r.kode" :terlambat="r.terlambat" />

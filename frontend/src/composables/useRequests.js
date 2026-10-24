@@ -20,7 +20,7 @@ export function useRequests() {
   const form = ref({ waktu_jemput: today, catatan: '' })
   const files = ref([]) // { file, url }
   const tanggapan = ref({})
-  const { error, run } = useAsyncAction()
+  const { error, loading: memuat, run } = useAsyncAction()
 
   const fetchList = async () => { list.value = await listRequests() }
   const load = () => run(fetchList)
@@ -77,5 +77,5 @@ export function useRequests() {
   onMounted(load)
   onBeforeUnmount(clearPhotos)
 
-  return { today, list, error, errors, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batal, putus, buatOrder }
+  return { memuat, today, list, error, errors, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batal, putus, buatOrder }
 }

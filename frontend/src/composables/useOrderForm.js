@@ -18,7 +18,7 @@ export function useOrderForm() {
   const permintaan = ref(null)
   const users = ref([])
   const errors = ref({})
-  const { error, run } = useAsyncAction()
+  const { error, loading: memuat, run } = useAsyncAction()
   const d = new Date(); d.setDate(d.getDate() + ESTIMASI_HARI)
   const form = ref({ user_id: '', berat_kg: 1, estimasi_selesai: d.toISOString().slice(0, 10) })
   const items = ref([itemKosong()])
@@ -48,5 +48,5 @@ export function useOrderForm() {
     })
   }
 
-  return { permintaan, users, error, errors, form, items, tambah, hapus, simpan }
+  return { memuat, permintaan, users, error, errors, form, items, tambah, hapus, simpan }
 }

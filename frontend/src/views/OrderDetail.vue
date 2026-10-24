@@ -7,13 +7,15 @@ import OrderTag from '../components/OrderTag.vue'
 import ProgressSteps from '../components/ProgressSteps.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import FieldError from '../components/FieldError.vue'
+import LoadingState from '../components/LoadingState.vue'
 
 const props = defineProps({ id: String })
-const { o, error, errors, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKomplain } = useOrderDetail(() => props.id)
+const { memuat, o, error, errors, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKomplain } = useOrderDetail(() => props.id)
 </script>
 
 <template>
   <p v-if="error" class="error" role="alert">{{ error }}</p>
+  <LoadingState :loading="memuat && !o" />
   <template v-if="o">
     <div class="row-between">
       <h1><OrderTag :kode="o.kode" :terlambat="o.terlambat" /></h1>

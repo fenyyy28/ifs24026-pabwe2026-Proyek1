@@ -9,7 +9,7 @@ import { bersihkanField } from '../utils/sanitize'
 export function useUsers() {
   const users = ref([])
   const form = ref(null)
-  const { error, run } = useAsyncAction()
+  const { error, loading: memuat, run } = useAsyncAction()
 
   const fetchUsers = async () => { requireAdmin(); users.value = await listUsers() }
   const load = () => run(fetchUsers)
@@ -32,5 +32,5 @@ export function useUsers() {
 
   onMounted(load)
 
-  return { users, error, form, ubah, batalUbah, simpan, hapus }
+  return { memuat, users, error, form, ubah, batalUbah, simpan, hapus }
 }

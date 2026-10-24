@@ -7,8 +7,9 @@ import LaundryArt from '../components/LaundryArt.vue'
 import ProgressSteps from '../components/ProgressSteps.vue'
 import OrderTag from '../components/OrderTag.vue'
 import StatusPill from '../components/StatusPill.vue'
+import LoadingState from '../components/LoadingState.vue'
 
-const { stats, orders, notifs, komplain, permintaan, error, aktif, siap, terlambat, sapaan, ringkas } = useDashboard()
+const { memuat, stats, orders, notifs, komplain, permintaan, error, aktif, siap, terlambat, sapaan, ringkas } = useDashboard()
 </script>
 
 <template>
@@ -25,6 +26,7 @@ const { stats, orders, notifs, komplain, permintaan, error, aktif, siap, terlamb
     <LaundryArt class="hero-art" />
   </section>
   <p v-if="error" class="error">{{ error }}</p>
+  <LoadingState :loading="memuat" />
 
   <div v-if="!auth.isAdmin && siap.length" class="banner ok" role="status">
     <b>Cucianmu sudah selesai!</b>

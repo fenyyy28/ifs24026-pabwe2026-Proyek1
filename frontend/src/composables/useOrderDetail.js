@@ -13,7 +13,7 @@ export function useOrderDetail(getId) {
   const komplain = ref({ jenis: 'hilang', deskripsi: '' })
   const terkirim = ref(false)
   const errors = ref({})
-  const { error, run } = useAsyncAction()
+  const { error, loading: memuat, run } = useAsyncAction()
 
   const fetchOrder = async () => { o.value = await getOrder(getId()) }
   const load = () => run(fetchOrder)
@@ -39,5 +39,5 @@ export function useOrderDetail(getId) {
     })
   }
 
-  return { o, error, errors, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKomplain }
+  return { memuat, o, error, errors, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKomplain }
 }

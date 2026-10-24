@@ -7,8 +7,9 @@ import ProgressSteps from '../components/ProgressSteps.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import OrderTag from '../components/OrderTag.vue'
 import FieldError from '../components/FieldError.vue'
+import LoadingState from '../components/LoadingState.vue'
 
-const { today, list, error, errors, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batal, putus, buatOrder } = useRequests()
+const { memuat, today, list, error, errors, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batal, putus, buatOrder } = useRequests()
 </script>
 
 <template>
@@ -40,7 +41,8 @@ const { today, list, error, errors, sukses, loading, form, files, tanggapan, pil
   <p v-else-if="error" class="error">{{ error }}</p>
 
   <h2>{{ auth.isAdmin ? 'Semua permintaan' : 'Permintaan saya' }}</h2>
-  <p v-if="!list.length" class="empty">{{ auth.isAdmin ? 'Belum ada permintaan jemput.' : 'Belum ada permintaan. Ajukan lewat form di atas.' }}</p>
+  <LoadingState :loading="memuat" />
+  <p v-if="!memuat && !list.length" class="empty">{{ auth.isAdmin ? 'Belum ada permintaan jemput.' : 'Belum ada permintaan. Ajukan lewat form di atas.' }}</p>
   <article v-for="r in list" :key="r.id" class="card">
     <div class="row-between">
       <b v-if="auth.isAdmin">{{ r.nama }} · kamar {{ r.kamar }}</b>

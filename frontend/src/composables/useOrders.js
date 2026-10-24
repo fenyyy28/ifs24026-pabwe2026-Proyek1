@@ -10,7 +10,7 @@ export function useOrders() {
   const q = ref('')
   const status = ref('')
   const late = ref(false)
-  const { error, run } = useAsyncAction()
+  const { error, loading: memuat, run } = useAsyncAction()
 
   const fetchOrders = async () => { orders.value = await listOrders({ q: q.value, status: status.value, late: late.value }) }
   const load = () => run(fetchOrders)
@@ -23,5 +23,5 @@ export function useOrders() {
   onMounted(load)
   watch([q, status, late], load)
 
-  return { orders, q, status, late, error, hapus }
+  return { memuat, orders, q, status, late, error, hapus }
 }

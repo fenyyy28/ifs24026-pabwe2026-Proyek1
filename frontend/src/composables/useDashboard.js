@@ -13,7 +13,7 @@ export function useDashboard() {
   const notifs = ref([])
   const komplain = ref([])
   const permintaan = ref([])
-  const { error, run } = useAsyncAction()
+  const { error, loading: memuat, run } = useAsyncAction()
 
   const load = () => run(async () => {
     stats.value = await getStats()
@@ -38,5 +38,5 @@ export function useDashboard() {
     return 'Belum ada cucian aktif. Serahkan cucianmu ke petugas dan statusnya akan muncul di sini.'
   })
 
-  return { stats, orders, notifs, komplain, permintaan, error, aktif, siap, terlambat, sapaan, ringkas }
+  return { memuat, stats, orders, notifs, komplain, permintaan, error, aktif, siap, terlambat, sapaan, ringkas }
 }
