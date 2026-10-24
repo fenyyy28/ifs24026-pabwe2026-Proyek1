@@ -15,8 +15,8 @@ import Board from './views/Board.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/masuk', component: Login, meta: { public: true } },
-    { path: '/daftar', component: Register, meta: { public: true } },
+    { path: '/masuk', alias: ['/auth/login'], component: Login, meta: { public: true } },
+    { path: '/daftar', alias: ['/auth/register'], component: Register, meta: { public: true } },
     { path: '/', component: Dashboard },
     { path: '/order', component: Orders },
     { path: '/order/baru', component: OrderNew, meta: { admin: true } },

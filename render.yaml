@@ -1,7 +1,7 @@
 # Blueprint deploy ke Render (satu layanan: API Express + tampilan Vue hasil build)
 services:
   - type: web
-    name: laundrytrack-asrama
+    name: ifs24026-pabwe2026-proyek1
     runtime: node
     plan: free
     buildCommand: cd frontend && npm install && npm run build && cd ../backend && npm install

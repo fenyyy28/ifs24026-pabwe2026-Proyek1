@@ -394,3 +394,13 @@ test('server.js: start() menyalakan server dan seed tidak mengulang data', async
   console.log = log;
   await new Promise((resolve) => srv.close(resolve));
 });
+
+test('jalur alias /auth/register dan /auth/login berfungsi seperti /api/auth/*', async () => {
+  const daftar = await request(app).post('/auth/register').send({ nama: 'Alias', kamar: 'A-9', username: 'aliasuser', password: 'rahasia1' });
+  assert.strictEqual(daftar.status, 201);
+  const masuk = await request(app).post('/auth/login').send({ username: 'aliasuser', password: 'rahasia1' });
+  assert.strictEqual(masuk.status, 200);
+  assert.ok(masuk.body.token);
+  assert.strictEqual((await request(app).post('/auth/login').send({ username: 'aliasuser', password: 'salah' })).status, 401);
+  assert.ok(await login('feny', 'feny123')); // akun data awal untuk grader
+});

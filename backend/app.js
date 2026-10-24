@@ -64,7 +64,7 @@ const logStatus = (orderId, status) =>
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 // ---------- AUTH ----------
-app.post('/api/auth/register', (req, res) => {
+const register = (req, res) => {
   const { nama, kamar, kontak, password } = req.body;
   const username = String(req.body.username || '').trim().toLowerCase();
   if (!nama || !kamar) return bad(res, 'Nama dan nomor kamar wajib diisi');
@@ -75,16 +75,20 @@ app.post('/api/auth/register', (req, res) => {
     .run(nama.trim(), kamar.trim(), kontak || null, username, hashPassword(password), 'penghuni');
   const user = db.prepare('SELECT id,nama,kamar,kontak,username,role FROM users WHERE id=?').get(r.lastInsertRowid);
   res.status(201).json({ token: sign(user), user });
-});
+};
+app.post('/api/auth/register', register);
+app.post('/auth/register', register);
 
-app.post('/api/auth/login', (req, res) => {
+const login = (req, res) => {
   const username = String(req.body.username || '').trim().toLowerCase();
   const row = db.prepare('SELECT * FROM users WHERE username=?').get(username);
   if (!row || !verifyPassword(String(req.body.password || ''), row.password_hash))
     return bad(res, 'Username atau kata sandi salah', 401);
   const { password_hash, ...user } = row;
   res.json({ token: sign(user), user });
-});
+};
+app.post('/api/auth/login', login);
+app.post('/auth/login', login);
 
 app.get('/api/auth/me', auth, (req, res) => res.json(req.user));
 

@@ -105,6 +105,7 @@ function seed() {
   u.run('Budi Santoso', 'A-101', '081200000001', 'budi', hashPassword('budi123'), 'penghuni');
   u.run('Siti Aminah', 'B-205', '081200000002', 'siti', hashPassword('siti123'), 'penghuni');
   u.run('Andre Silalahi', 'C-310', '081200000003', 'andre', hashPassword('andre123'), 'penghuni');
+  u.run('Feny Pasaribu', 'K4.09', '081200000004', 'feny', hashPassword('feny123'), 'penghuni');
 
   const day = (d) => { const t = new Date(); t.setDate(t.getDate() + d); return t.toISOString().slice(0, 10); };
   const o = db.prepare('INSERT INTO orders(kode,user_id,estimasi_selesai,status,berat_kg,total_harga) VALUES (?,?,?,?,?,?)');

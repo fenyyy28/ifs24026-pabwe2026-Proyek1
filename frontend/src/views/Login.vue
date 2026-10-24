@@ -36,8 +36,8 @@ async function masuk() {
       <form @submit.prevent="masuk" class="form">
         <h2>Masuk</h2>
         <p class="hint">Gunakan akun yang kamu daftarkan.</p>
-        <label>Username <input v-model="form.username" autocomplete="username" required autofocus /></label>
-        <label>Kata sandi <input type="password" v-model="form.password" autocomplete="current-password" required /></label>
+        <label>Username <input name="username" v-model="form.username" autocomplete="username" required autofocus /></label>
+        <label>Kata sandi <input name="password" type="password" v-model="form.password" autocomplete="current-password" required /></label>
         <p v-if="error" class="error" role="alert">{{ error }}</p>
         <button class="btn" type="submit" :disabled="loading">{{ loading ? 'Memproses…' : 'Masuk' }}</button>
         <p class="alt">Belum punya akun? <RouterLink to="/daftar">Daftar sebagai penghuni</RouterLink></p>

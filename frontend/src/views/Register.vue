@@ -33,14 +33,14 @@ async function daftar() {
     <section class="auth-form">
       <form @submit.prevent="daftar" class="form">
         <h2>Buat akun</h2>
-        <label>Nama lengkap <input v-model="form.nama" autocomplete="name" required /></label>
+        <label>Nama lengkap <input name="nama" v-model="form.nama" autocomplete="name" required /></label>
         <div class="grid2">
-          <label>Nomor kamar <input v-model="form.kamar" placeholder="A-101" required /></label>
+          <label>Nomor kamar <input name="kamar" v-model="form.kamar" placeholder="A-101" required /></label>
           <label>Kontak (opsional) <input v-model="form.kontak" inputmode="tel" /></label>
         </div>
-        <label>Username <input v-model="form.username" autocomplete="username" placeholder="huruf kecil, angka, titik" required /></label>
+        <label>Username <input name="username" v-model="form.username" autocomplete="username" placeholder="huruf kecil, angka, titik" required /></label>
         <div class="grid2">
-          <label>Kata sandi <input type="password" v-model="form.password" autocomplete="new-password" minlength="6" required /></label>
+          <label>Kata sandi <input name="password" type="password" v-model="form.password" autocomplete="new-password" minlength="6" required /></label>
           <label>Ulangi kata sandi <input type="password" v-model="ulang" autocomplete="new-password" required /></label>
         </div>
         <p v-if="error" class="error" role="alert">{{ error }}</p>
