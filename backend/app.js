@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // ---------- UPLOAD FOTO ----------
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
+const UPLOAD_DIR = process.env.UPLOAD_DIR || (process.env.VERCEL ? '/tmp/uploads' : path.join(__dirname, 'uploads'));
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 class UploadError extends Error {}
 const EXT = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp' };
@@ -367,5 +367,8 @@ app.use((err, req, res, next) => {
   console.error(err);
   bad(res, 'Terjadi kesalahan pada server', 500);
 });
+
+// Di Vercel tidak ada server.js yang memanggil seed(), jadi isi data awal saat dimuat.
+if (process.env.VERCEL) db.seed();
 
 module.exports = app;
