@@ -1,5 +1,5 @@
 <script setup>
-import { statusLabel, komplainLabel } from '../api'
+import { statusLabel, komplainLabel } from '../utils/format'
 const props = defineProps({ status: String, komplain: Boolean })
 </script>
 <template>

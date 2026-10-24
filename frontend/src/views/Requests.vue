@@ -1,64 +1,18 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import { api, REQ_STEPS, REQ_LABEL, tgl } from '../api'
+import { useRequests } from '../composables/useRequests'
+import { REQ_STEPS, REQ_LABEL } from '../constants'
+import { tgl } from '../utils/format'
 import { auth } from '../auth'
-import { compressImage } from '../image'
 import ProgressSteps from '../components/ProgressSteps.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import OrderTag from '../components/OrderTag.vue'
 
 const router = useRouter()
-const list = ref([])
-const error = ref('')
-const sukses = ref(false)
-const loading = ref(false)
-const today = new Date().toISOString().slice(0, 10)
-const form = ref({ waktu_jemput: today, catatan: '' })
-const files = ref([]) // { file, url }
-const tanggapan = ref({})
-
-async function load() {
-  try { list.value = await api('/api/requests') } catch (e) { error.value = e.message }
-}
-onMounted(load)
-onBeforeUnmount(() => files.value.forEach((f) => URL.revokeObjectURL(f.url)))
-
-async function pilih(e) {
-  error.value = ''
-  const picked = [...e.target.files]
-  e.target.value = ''
-  for (const f of picked) {
-    if (files.value.length >= 4) { error.value = 'Maksimal 4 foto per permintaan'; break }
-    const small = await compressImage(f)
-    files.value.push({ file: small, url: URL.createObjectURL(small) })
-  }
-}
-function buang(i) { URL.revokeObjectURL(files.value[i].url); files.value.splice(i, 1) }
-
-async function kirim() {
-  error.value = ''; sukses.value = false; loading.value = true
-  try {
-    const fd = new FormData()
-    fd.append('waktu_jemput', form.value.waktu_jemput)
-    fd.append('catatan', form.value.catatan)
-    files.value.forEach((f) => fd.append('foto', f.file, f.file.name || 'foto.jpg'))
-    await api('/api/requests', { method: 'POST', body: fd })
-    form.value.catatan = ''
-    files.value.forEach((f) => URL.revokeObjectURL(f.url)); files.value = []
-    sukses.value = true
-    load()
-  } catch (e) { error.value = e.message } finally { loading.value = false }
-}
+const { today, list, error, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batalkan, putus } = useRequests()
 
 async function batal(r) {
-  if (!confirm('Batalkan permintaan jemput ini?')) return
-  try { await api('/api/requests/' + r.id, { method: 'DELETE' }); load() } catch (e) { error.value = e.message }
-}
-async function putus(r, status) {
-  error.value = ''
-  try { await api('/api/requests/' + r.id, { method: 'PATCH', body: { status, tanggapan: tanggapan.value[r.id] } }); load() }
-  catch (e) { error.value = e.message }
+  if (confirm('Batalkan permintaan jemput ini?')) await batalkan(r)
 }
 const buatOrder = (r) => router.push({ path: '/order/baru', query: { permintaan: r.id } })
 </script>

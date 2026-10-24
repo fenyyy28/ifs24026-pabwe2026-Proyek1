@@ -1,30 +1,15 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import { api, STATUS, rupiah, tgl } from '../api'
+import { useOrders } from '../composables/useOrders'
+import { STATUS } from '../constants'
+import { rupiah, tgl } from '../utils/format'
 import { auth } from '../auth'
 import OrderTag from '../components/OrderTag.vue'
 import StatusPill from '../components/StatusPill.vue'
 
-const orders = ref([])
-const q = ref('')
-const status = ref('')
-const late = ref(false)
-const error = ref('')
-
-async function load() {
-  const p = new URLSearchParams()
-  if (q.value) p.set('q', q.value)
-  if (status.value) p.set('status', status.value)
-  if (late.value) p.set('terlambat', '1')
-  try { orders.value = await api('/api/orders?' + p) } catch (e) { error.value = e.message }
-}
-onMounted(load)
-watch([q, status, late], load)
+const { orders, q, status, late, error, remove } = useOrders()
 
 async function hapus(o) {
-  if (!confirm(`Hapus order ${o.kode}?`)) return
-  await api('/api/orders/' + o.id, { method: 'DELETE' })
-  load()
+  if (confirm(`Hapus order ${o.kode}?`)) await remove(o)
 }
 </script>
 

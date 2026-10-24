@@ -1,41 +1,14 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { api, STATUS, STATUS_PESAN, tgl, JENIS_KOMPLAIN } from '../api'
+import { useDashboard } from '../composables/useDashboard'
+import { STATUS, STATUS_PESAN, JENIS_KOMPLAIN } from '../constants'
+import { tgl } from '../utils/format'
 import { auth } from '../auth'
 import LaundryArt from '../components/LaundryArt.vue'
 import ProgressSteps from '../components/ProgressSteps.vue'
 import OrderTag from '../components/OrderTag.vue'
 import StatusPill from '../components/StatusPill.vue'
 
-const stats = ref({})
-const orders = ref([])
-const notifs = ref([])
-const komplain = ref([])
-const permintaan = ref([])
-const error = ref('')
-
-onMounted(async () => {
-  try {
-    stats.value = await api('/api/stats')
-    orders.value = await api('/api/orders')
-    if (auth.isAdmin) {
-      komplain.value = (await api('/api/complaints')).filter((c) => c.status !== 'selesai').slice(0, 5)
-      permintaan.value = (await api('/api/requests')).filter((r) => r.status === 'menunggu').slice(0, 5)
-    }
-    else notifs.value = (await api('/api/notifications')).slice(0, 4)
-  } catch (e) { error.value = e.message }
-})
-
-const aktif = computed(() => orders.value.filter((o) => o.status !== 'selesai'))
-const siap = computed(() => orders.value.filter((o) => o.status === 'siap_diambil'))
-const terlambat = computed(() => orders.value.filter((o) => o.terlambat))
-const sapaan = computed(() => auth.user?.nama?.split(' ')[0])
-const ringkas = computed(() => {
-  if (auth.isAdmin) return `${stats.value.aktif ?? 0} order sedang diproses, ${stats.value.terlambat ?? 0} melewati estimasi.`
-  if (siap.value.length) return `${siap.value.length} cucian sudah selesai dan siap kamu ambil.`
-  if (aktif.value.length) return `${aktif.value.length} cucianmu sedang diproses.`
-  return 'Belum ada cucian aktif. Serahkan cucianmu ke petugas dan statusnya akan muncul di sini.'
-})
+const { stats, orders, notifs, komplain, permintaan, error, aktif, siap, terlambat, sapaan, ringkas } = useDashboard()
 </script>
 
 <template>

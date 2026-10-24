@@ -1,22 +1,11 @@
 <script setup>
-import { watch, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { auth } from './auth'
-import { api } from './api'
+import { useUnreadPolling } from './composables/useUnreadPolling'
 
 const route = useRoute()
 const router = useRouter()
-let timer
-
-async function poll() {
-  if (!auth.token) return
-  try { auth.unread = (await api('/api/notifications/unread-count')).total } catch {}
-}
-watch(() => auth.token, (t) => {
-  clearInterval(timer)
-  if (t) { poll(); timer = setInterval(poll, 20000) }
-}, { immediate: true })
-onBeforeUnmount(() => clearInterval(timer))
+useUnreadPolling()
 
 function keluar() { auth.logout(); router.push('/auth/login') }
 </script>

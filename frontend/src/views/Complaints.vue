@@ -1,30 +1,15 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { api, KOMPLAIN_STATUS, JENIS_KOMPLAIN, tgl } from '../api'
+import { useComplaints } from '../composables/useComplaints'
+import { KOMPLAIN_STATUS, JENIS_KOMPLAIN } from '../constants'
+import { tgl } from '../utils/format'
 import { auth } from '../auth'
 import OrderTag from '../components/OrderTag.vue'
 import ProgressSteps from '../components/ProgressSteps.vue'
 
-const list = ref([])
-const draft = ref({})
-const error = ref('')
+const { list, draft, error, simpan, remove } = useComplaints()
 
-async function load() {
-  try {
-    list.value = await api('/api/complaints')
-    for (const c of list.value) draft.value[c.id] = { status: c.status, tanggapan: c.tanggapan || '' }
-  } catch (e) { error.value = e.message }
-}
-onMounted(load)
-
-async function simpan(c) {
-  error.value = ''
-  try { await api('/api/complaints/' + c.id, { method: 'PATCH', body: draft.value[c.id] }); load() }
-  catch (e) { error.value = e.message }
-}
 async function hapus(c) {
-  if (!confirm('Hapus komplain ini?')) return
-  await api('/api/complaints/' + c.id, { method: 'DELETE' }); load()
+  if (confirm('Hapus komplain ini?')) await remove(c)
 }
 </script>
 

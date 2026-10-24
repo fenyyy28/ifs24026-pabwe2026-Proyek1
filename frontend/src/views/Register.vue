@@ -1,26 +1,8 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { api } from '../api'
-import { auth } from '../auth'
+import { useRegister } from '../composables/useAuthForm'
 import LaundryArt from '../components/LaundryArt.vue'
 
-const router = useRouter()
-const form = ref({ nama: '', kamar: '', kontak: '', username: '', password: '' })
-const ulang = ref('')
-const error = ref('')
-const loading = ref(false)
-
-async function daftar() {
-  error.value = ''
-  if (form.value.password !== ulang.value) { error.value = 'Konfirmasi kata sandi tidak sama'; return }
-  loading.value = true
-  try {
-    const r = await api('/api/auth/register', { method: 'POST', body: form.value })
-    auth.setSession(r.token, r.user)
-    router.push('/')
-  } catch (e) { error.value = e.message } finally { loading.value = false }
-}
+const { form, ulang, error, loading, daftar } = useRegister()
 </script>
 
 <template>

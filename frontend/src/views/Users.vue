@@ -1,22 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { api } from '../api'
+import { useUsers } from '../composables/useUsers'
 
-const users = ref([])
-const error = ref('')
-const form = ref(null)
+const { users, error, form, simpan, remove } = useUsers()
 
-async function load() { users.value = await api('/api/users') }
-onMounted(() => load().catch((e) => (error.value = e.message)))
-
-async function simpan() {
-  error.value = ''
-  try { await api('/api/users/' + form.value.id, { method: 'PUT', body: form.value }); form.value = null; load() }
-  catch (e) { error.value = e.message }
-}
 async function hapus(u) {
-  if (!confirm(`Hapus ${u.nama}? Semua order miliknya ikut terhapus.`)) return
-  await api('/api/users/' + u.id, { method: 'DELETE' }); load()
+  if (confirm(`Hapus ${u.nama}? Semua order miliknya ikut terhapus.`)) await remove(u)
 }
 </script>
 

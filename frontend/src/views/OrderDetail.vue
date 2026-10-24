@@ -1,41 +1,14 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { api, STATUS, STATUS_PESAN, KOMPLAIN_STATUS, JENIS_KOMPLAIN, statusLabel, rupiah, tgl } from '../api'
+import { useOrderDetail } from '../composables/useOrderDetail'
+import { STATUS, STATUS_PESAN, KOMPLAIN_STATUS, JENIS_KOMPLAIN } from '../constants'
+import { statusLabel, rupiah, tgl } from '../utils/format'
 import { auth } from '../auth'
 import OrderTag from '../components/OrderTag.vue'
 import ProgressSteps from '../components/ProgressSteps.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 
 const props = defineProps({ id: String })
-const o = ref(null)
-const error = ref('')
-const komplain = ref({ jenis: 'hilang', deskripsi: '' })
-const terkirim = ref(false)
-
-async function load() { o.value = await api('/api/orders/' + props.id) }
-onMounted(() => load().catch((e) => (error.value = e.message)))
-
-const idx = computed(() => STATUS.findIndex((s) => s.v === o.value?.status))
-const next = computed(() => STATUS[idx.value + 1])
-const belum = computed(() => o.value?.items.filter((i) => !i.dikembalikan).length ?? 0)
-
-async function setStatus(v) {
-  error.value = ''
-  try { await api(`/api/orders/${props.id}/status`, { method: 'PATCH', body: { status: v } }); await load() }
-  catch (e) { error.value = e.message }
-}
-async function cek(item) {
-  await api('/api/items/' + item.id, { method: 'PATCH', body: { dikembalikan: !item.dikembalikan } })
-  load()
-}
-async function kirimKomplain() {
-  error.value = ''; terkirim.value = false
-  try {
-    await api('/api/complaints', { method: 'POST', body: { order_id: props.id, ...komplain.value } })
-    komplain.value.deskripsi = ''; terkirim.value = true
-    load()
-  } catch (e) { error.value = e.message }
-}
+const { o, error, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKomplain } = useOrderDetail(() => props.id)
 </script>
 
 <template>

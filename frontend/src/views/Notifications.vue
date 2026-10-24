@@ -1,26 +1,17 @@
 <script setup>
-import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { api, tgl } from '../api'
+import { useNotifications } from '../composables/useNotifications'
+import { tgl } from '../utils/format'
 import { auth } from '../auth'
 
 const router = useRouter()
-const list = ref([])
-const error = ref('')
-
-async function load() {
-  try {
-    list.value = await api('/api/notifications')
-    auth.unread = list.value.filter((n) => !n.dibaca).length
-  } catch (e) { error.value = e.message }
-}
-onMounted(load)
+const { list, error, markRead, markAll } = useNotifications()
 
 async function buka(n) {
-  if (!n.dibaca) { await api(`/api/notifications/${n.id}/read`, { method: 'PATCH' }); n.dibaca = 1; auth.unread = Math.max(0, auth.unread - 1) }
+  await markRead(n)
   if (n.order_id) router.push('/order/' + n.order_id)
 }
-async function semua() { await api('/api/notifications/read-all', { method: 'POST' }); load() }
+const semua = markAll
 </script>
 
 <template>

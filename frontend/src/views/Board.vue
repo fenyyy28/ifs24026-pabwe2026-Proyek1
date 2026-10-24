@@ -1,19 +1,11 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { api, STATUS, tgl } from '../api'
+import { useBoard } from '../composables/useBoard'
+import { STATUS } from '../constants'
+import { tgl } from '../utils/format'
 import OrderTag from '../components/OrderTag.vue'
 import StatusPill from '../components/StatusPill.vue'
 
-const rows = ref([])
-const error = ref('')
-const filter = ref('')
-
-onMounted(async () => {
-  try { rows.value = await api('/api/board') } catch (e) { error.value = e.message }
-})
-
-const tahap = computed(() => STATUS.slice(0, 4).map((s) => ({ ...s, n: rows.value.filter((r) => r.status === s.v).length })))
-const tampil = computed(() => (filter.value ? rows.value.filter((r) => r.status === filter.value) : rows.value))
+const { rows, error, filter, tahap, tampil } = useBoard()
 </script>
 
 <template>

@@ -1,23 +1,8 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { api } from '../api'
-import { auth } from '../auth'
+import { useLogin } from '../composables/useAuthForm'
 import LaundryArt from '../components/LaundryArt.vue'
 
-const router = useRouter()
-const form = ref({ username: '', password: '' })
-const error = ref('')
-const loading = ref(false)
-
-async function masuk() {
-  error.value = ''; loading.value = true
-  try {
-    const r = await api('/api/auth/login', { method: 'POST', body: form.value })
-    auth.setSession(r.token, r.user)
-    router.push('/')
-  } catch (e) { error.value = e.message } finally { loading.value = false }
-}
+const { form, error, loading, masuk } = useLogin()
 </script>
 
 <template>
