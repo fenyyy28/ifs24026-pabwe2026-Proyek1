@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: laundrytrack-asrama
+    runtime: node
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build && cd ../backend && npm install
+    startCommand: cd backend && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: JWT_SECRET
+        generateValue: true
