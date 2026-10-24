@@ -94,7 +94,8 @@ function migrate(d) {
   pragma(d, `user_version = ${SCHEMA_VERSION}`);
 }
 
-const file = process.env.DB_PATH || path.join(__dirname, 'laundry.db');
+// Di Vercel hanya /tmp yang bisa ditulis (data bersifat sementara).
+const file = process.env.DB_PATH || (process.env.VERCEL ? '/tmp/laundry.db' : path.join(__dirname, 'laundry.db'));
 const db = new Database(file);
 migrate(db);
 
