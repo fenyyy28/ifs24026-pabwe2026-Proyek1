@@ -3,6 +3,7 @@ import { useOrderForm } from '../composables/useOrderForm'
 import { rupiah, tgl } from '../utils/format'
 import { auth } from '../auth'
 import PhotoGallery from '../components/PhotoGallery.vue'
+import FormField from '../components/FormField.vue'
 import FieldError from '../components/FieldError.vue'
 import LoadingState from '../components/LoadingState.vue'
 
@@ -22,16 +23,19 @@ const { memuat, permintaan, users, error, errors, form, items, tambah, hapus, si
     <p class="hint">Catat pakaian satu per satu di bawah. Foto ini otomatis tersimpan di order sebagai kondisi awal.</p>
   </section>
   <form @submit.prevent="simpan" class="form card">
-    <label>Penghuni
-      <select v-model="form.user_id" required :aria-invalid="!!errors.user_id" :aria-describedby="errors.user_id ? 'err-user_id' : undefined">
+    <FormField label="Penghuni" name="user_id" :error="errors.user_id" v-slot="{ attrs }">
+      <select v-model="form.user_id" required v-bind="attrs">
         <option value="" disabled>Pilih penghuni</option>
         <option v-for="u in users" :key="u.id" :value="u.id">{{ u.nama }} ({{ u.kamar }})</option>
       </select>
-      <FieldError id="err-user_id" :message="errors.user_id" />
-    </label>
+    </FormField>
     <div class="grid2">
-      <label>Berat (kg) <input type="number" min="0.5" step="0.5" v-model="form.berat_kg" required :aria-invalid="!!errors.berat_kg" :aria-describedby="errors.berat_kg ? 'err-berat_kg' : undefined" /><FieldError id="err-berat_kg" :message="errors.berat_kg" /></label>
-      <label>Estimasi selesai <input type="date" v-model="form.estimasi_selesai" required :aria-invalid="!!errors.estimasi_selesai" :aria-describedby="errors.estimasi_selesai ? 'err-estimasi_selesai' : undefined" /><FieldError id="err-estimasi_selesai" :message="errors.estimasi_selesai" /></label>
+      <FormField label="Berat (kg)" name="berat_kg" :error="errors.berat_kg" v-slot="{ attrs }">
+        <input type="number" min="0.5" step="0.5" v-model="form.berat_kg" required v-bind="attrs" />
+      </FormField>
+      <FormField label="Estimasi selesai" name="estimasi_selesai" :error="errors.estimasi_selesai" v-slot="{ attrs }">
+        <input type="date" v-model="form.estimasi_selesai" required v-bind="attrs" />
+      </FormField>
     </div>
     <p class="hint">Perkiraan biaya: {{ rupiah(form.berat_kg * 5000) }} (Rp 5.000 per kg)</p>
 

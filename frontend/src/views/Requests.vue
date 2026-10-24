@@ -6,7 +6,7 @@ import { auth } from '../auth'
 import ProgressSteps from '../components/ProgressSteps.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import OrderTag from '../components/OrderTag.vue'
-import FieldError from '../components/FieldError.vue'
+import FormField from '../components/FormField.vue'
 import LoadingState from '../components/LoadingState.vue'
 
 const { memuat, today, list, error, errors, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batal, putus, buatOrder } = useRequests()
@@ -19,8 +19,12 @@ const { memuat, today, list, error, errors, sukses, loading, form, files, tangga
     <h2 class="h-sub">Ajukan permintaan jemput</h2>
     <p class="hint">Foto pakaian kotor membantu petugas mencatat kondisi awal, jadi lebih mudah dibuktikan kalau ada barang hilang atau rusak.</p>
     <div class="grid2">
-      <label>Tanggal jemput <input type="date" v-model="form.waktu_jemput" :min="today" required :aria-invalid="!!errors.waktu_jemput" :aria-describedby="errors.waktu_jemput ? 'err-waktu_jemput' : undefined" /><FieldError id="err-waktu_jemput" :message="errors.waktu_jemput" /></label>
-      <label>Isi cucian <input v-model="form.catatan" placeholder="Contoh: 5 kaos, 2 celana, 1 jaket" required :aria-invalid="!!errors.catatan" :aria-describedby="errors.catatan ? 'err-catatan' : undefined" /><FieldError id="err-catatan" :message="errors.catatan" /></label>
+      <FormField label="Tanggal jemput" name="waktu_jemput" :error="errors.waktu_jemput" v-slot="{ attrs }">
+        <input type="date" v-model="form.waktu_jemput" :min="today" required v-bind="attrs" />
+      </FormField>
+      <FormField label="Isi cucian" name="catatan" :error="errors.catatan" v-slot="{ attrs }">
+        <input v-model="form.catatan" placeholder="Contoh: 5 kaos, 2 celana, 1 jaket" required v-bind="attrs" />
+      </FormField>
     </div>
     <div>
       <label class="upload">

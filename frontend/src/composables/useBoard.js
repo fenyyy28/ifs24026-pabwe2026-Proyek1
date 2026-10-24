@@ -11,8 +11,12 @@ export function useBoard() {
 
   onMounted(() => run(async () => { rows.value = await getBoard() }))
 
+  const semua = () => { filter.value = '' }
+  // Memilih tahap yang sama sekali lagi membatalkan filter.
+  const toggleTahap = (v) => { filter.value = filter.value === v ? '' : v }
+
   const tahap = computed(() => STATUS.slice(0, 4).map((s) => ({ ...s, n: rows.value.filter((r) => r.status === s.v).length })))
   const tampil = computed(() => (filter.value ? rows.value.filter((r) => r.status === filter.value) : rows.value))
 
-  return { memuat, rows, error, filter, tahap, tampil }
+  return { memuat, rows, error, filter, tahap, tampil, semua, toggleTahap }
 }

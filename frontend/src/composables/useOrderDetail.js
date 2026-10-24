@@ -25,6 +25,9 @@ export function useOrderDetail(getId) {
 
   const setStatus = (v) => run(async () => { requireAdmin(); await updateOrderStatus(getId(), v); await fetchOrder() })
 
+  // Dipakai langsung oleh <select> di template, jadi view tidak perlu membaca $event.
+  const pilihStatus = (e) => setStatus(e.target.value)
+
   const cek = (item) => run(async () => { requireAdmin(); await setItemReturned(item.id, !item.dikembalikan); await fetchOrder() })
 
   async function kirimKomplain() {
@@ -39,5 +42,5 @@ export function useOrderDetail(getId) {
     })
   }
 
-  return { memuat, o, error, errors, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKomplain }
+  return { memuat, o, error, errors, komplain, terkirim, idx, next, belum, setStatus, pilihStatus, cek, kirimKomplain }
 }
