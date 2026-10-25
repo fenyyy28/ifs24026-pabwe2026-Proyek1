@@ -29,8 +29,8 @@ function keluar() { auth.logout(); router.push('/auth/login') }
         <RouterLink v-if="!auth.isAdmin" to="/papan">Papan cucian</RouterLink>
         <RouterLink to="/komplain">Komplain</RouterLink>
         <RouterLink v-if="auth.isAdmin" to="/penghuni">Penghuni</RouterLink>
-        <RouterLink to="/notifikasi" class="bell" :aria-label="`Notifikasi, ${auth.unread} belum dibaca`">
-          Notifikasi<span v-if="auth.unread" class="badge">{{ auth.unread }}</span>
+        <RouterLink to="/notifikasi" class="bell" :aria-label="auth.unread ? `Notifikasi ${auth.unread} belum dibaca` : 'Notifikasi'">
+  Notifikasi <span v-if="auth.unread" class="badge">{{ auth.unread }}</span>
         </RouterLink>
       </nav>
       <div class="who">

@@ -4,8 +4,9 @@ import { STATUS } from '../constants'
 import { tgl } from '../utils/format'
 import OrderTag from '../components/OrderTag.vue'
 import StatusPill from '../components/StatusPill.vue'
+import LoadingState from '../components/LoadingState.vue'
 
-const { rows, error, filter, tahap, tampil } = useBoard()
+const { memuat, rows, error, filter, tahap, tampil, semua, toggleTahap } = useBoard()
 </script>
 
 <template>
@@ -14,13 +15,14 @@ const { rows, error, filter, tahap, tampil } = useBoard()
   <p v-if="error" class="error">{{ error }}</p>
 
   <div class="chips" role="group" aria-label="Filter tahap">
-    <button class="chip" :class="{ on: !filter }" @click="filter = ''">Semua <b>{{ rows.length }}</b></button>
-    <button v-for="t in tahap" :key="t.v" class="chip" :class="{ on: filter === t.v }" @click="filter = filter === t.v ? '' : t.v">
+    <button class="chip" :class="{ on: !filter }" @click="semua">Semua <b>{{ rows.length }}</b></button>
+    <button v-for="t in tahap" :key="t.v" class="chip" :class="{ on: filter === t.v }" @click="toggleTahap(t.v)">
       {{ t.l }} <b>{{ t.n }}</b>
     </button>
   </div>
 
-  <p v-if="!tampil.length" class="empty">Tidak ada cucian di tahap ini.</p>
+  <LoadingState :loading="memuat" />
+  <p v-if="!memuat && !tampil.length" class="empty">Tidak ada cucian di tahap ini.</p>
   <ul class="list">
     <li v-for="r in tampil" :key="r.kode" :class="{ mine: r.milikku }">
       <OrderTag :kode="r.kode" :terlambat="r.terlambat" />

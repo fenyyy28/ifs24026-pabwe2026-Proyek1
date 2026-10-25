@@ -6,13 +6,16 @@ import { auth } from '../auth'
 import OrderTag from '../components/OrderTag.vue'
 import ProgressSteps from '../components/ProgressSteps.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
+import FormField from '../components/FormField.vue'
+import LoadingState from '../components/LoadingState.vue'
 
 const props = defineProps({ id: String })
-const { o, error, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKomplain } = useOrderDetail(() => props.id)
+const { memuat, o, error, errors, komplain, terkirim, idx, next, belum, setStatus, pilihStatus, cek, kirimKomplain } = useOrderDetail(() => props.id)
 </script>
 
 <template>
   <p v-if="error" class="error" role="alert">{{ error }}</p>
+  <LoadingState :loading="memuat && !o" />
   <template v-if="o">
     <div class="row-between">
       <h1><OrderTag :kode="o.kode" :terlambat="o.terlambat" /></h1>
@@ -27,7 +30,7 @@ const { o, error, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKom
       <p class="note">{{ STATUS_PESAN[o.status] }}</p>
       <div v-if="auth.isAdmin" class="filters">
         <button v-if="next" class="btn" @click="setStatus(next.v)">Ubah ke "{{ next.l }}"</button>
-        <select :value="o.status" @change="setStatus($event.target.value)" aria-label="Atur status langsung">
+        <select :value="o.status" @change="pilihStatus" aria-label="Atur status langsung">
           <option v-for="s in STATUS" :key="s.v" :value="s.v">{{ s.l }}</option>
         </select>
       </div>
@@ -71,12 +74,14 @@ const { o, error, komplain, terkirim, idx, next, belum, setStatus, cek, kirimKom
     <form v-if="!auth.isAdmin" class="form card" @submit.prevent="kirimKomplain">
       <h3>Ada masalah dengan cucian ini?</h3>
       <div class="grid2">
-        <label>Jenis masalah
-          <select v-model="komplain.jenis">
+        <FormField label="Jenis masalah" name="jenis" :error="errors.jenis" v-slot="{ attrs }">
+          <select v-model="komplain.jenis" v-bind="attrs">
             <option v-for="(l, k) in JENIS_KOMPLAIN" :key="k" :value="k">{{ l }}</option>
           </select>
-        </label>
-        <label>Ceritakan masalahnya <input v-model="komplain.deskripsi" placeholder="Contoh: kaos biru hanya kembali 3 dari 4" required /></label>
+        </FormField>
+        <FormField label="Ceritakan masalahnya" name="deskripsi" :error="errors.deskripsi" v-slot="{ attrs }">
+          <input v-model="komplain.deskripsi" placeholder="Contoh: kaos biru hanya kembali 3 dari 4" required v-bind="attrs" />
+        </FormField>
       </div>
       <p v-if="terkirim" class="ok-text" role="status">Komplain diajukan. Pantau statusnya di halaman Komplain.</p>
       <button class="btn" type="submit">Ajukan komplain</button>

@@ -5,19 +5,17 @@ import { tgl } from '../utils/format'
 import { auth } from '../auth'
 import OrderTag from '../components/OrderTag.vue'
 import ProgressSteps from '../components/ProgressSteps.vue'
+import LoadingState from '../components/LoadingState.vue'
 
-const { list, draft, error, simpan, remove } = useComplaints()
-
-async function hapus(c) {
-  if (confirm('Hapus komplain ini?')) await remove(c)
-}
+const { memuat, list, draft, error, simpan, hapus } = useComplaints()
 </script>
 
 <template>
   <h1>{{ auth.isAdmin ? 'Komplain penghuni' : 'Komplain saya' }}</h1>
   <p class="hint">Alur penyelesaian: Diajukan → Sedang ditangani → Selesai.</p>
   <p v-if="error" class="error" role="alert">{{ error }}</p>
-  <p v-if="!list.length" class="empty">
+  <LoadingState :loading="memuat" />
+  <p v-if="!memuat && !list.length" class="empty">
     {{ auth.isAdmin ? 'Belum ada komplain dari penghuni.' : 'Belum ada komplain. Ajukan dari halaman detail cucian jika ada masalah.' }}
   </p>
   <article v-for="c in list" :key="c.id" class="card">

@@ -5,6 +5,7 @@ import { getStats, listOrders } from '../services/orderService'
 import { listComplaints } from '../services/complaintService'
 import { listRequests } from '../services/requestService'
 import { listNotifications } from '../services/notificationService'
+import { useAsyncAction } from './useAsyncAction'
 
 export function useDashboard() {
   const stats = ref({})
@@ -12,20 +13,18 @@ export function useDashboard() {
   const notifs = ref([])
   const komplain = ref([])
   const permintaan = ref([])
-  const error = ref('')
+  const { error, loading: memuat, run } = useAsyncAction()
 
-  async function load() {
-    try {
-      stats.value = await getStats()
-      orders.value = await listOrders()
-      if (auth.isAdmin) {
-        komplain.value = (await listComplaints()).filter((c) => c.status !== 'selesai').slice(0, 5)
-        permintaan.value = (await listRequests()).filter((r) => r.status === 'menunggu').slice(0, 5)
-      } else {
-        notifs.value = (await listNotifications()).slice(0, 4)
-      }
-    } catch (e) { error.value = e.message }
-  }
+  const load = () => run(async () => {
+    stats.value = await getStats()
+    orders.value = await listOrders()
+    if (auth.isAdmin) {
+      komplain.value = (await listComplaints()).filter((c) => c.status !== 'selesai').slice(0, 5)
+      permintaan.value = (await listRequests()).filter((r) => r.status === 'menunggu').slice(0, 5)
+    } else {
+      notifs.value = (await listNotifications()).slice(0, 4)
+    }
+  })
   onMounted(load)
 
   const aktif = computed(() => orders.value.filter((o) => o.status !== 'selesai'))
@@ -39,5 +38,5 @@ export function useDashboard() {
     return 'Belum ada cucian aktif. Serahkan cucianmu ke petugas dan statusnya akan muncul di sini.'
   })
 
-  return { stats, orders, notifs, komplain, permintaan, error, aktif, siap, terlambat, sapaan, ringkas }
+  return { memuat, stats, orders, notifs, komplain, permintaan, error, aktif, siap, terlambat, sapaan, ringkas }
 }

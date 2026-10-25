@@ -1,8 +1,9 @@
 <script setup>
 import { useLogin } from '../composables/useAuthForm'
 import LaundryArt from '../components/LaundryArt.vue'
+import FormField from '../components/FormField.vue'
 
-const { form, error, loading, masuk } = useLogin()
+const { form, error, errors, loading, masuk } = useLogin()
 </script>
 
 <template>
@@ -21,8 +22,12 @@ const { form, error, loading, masuk } = useLogin()
       <form @submit.prevent="masuk" class="form">
         <h2>Masuk</h2>
         <p class="hint">Gunakan akun yang kamu daftarkan.</p>
-        <label>Username <input id="username" name="username" v-model="form.username" autocomplete="username" required autofocus /></label>
-        <label>Kata sandi <input id="password" name="password" type="password" v-model="form.password" autocomplete="current-password" required /></label>
+        <FormField label="Username" name="username" :error="errors.username" v-slot="{ attrs }">
+          <input id="username" name="username" v-model="form.username" autocomplete="username" required autofocus v-bind="attrs" />
+        </FormField>
+        <FormField label="Kata sandi" name="password" :error="errors.password" v-slot="{ attrs }">
+          <input id="password" name="password" type="password" v-model="form.password" autocomplete="current-password" required v-bind="attrs" />
+        </FormField>
         <p v-if="error" class="error" role="alert">{{ error }}</p>
         <button id="btn-submit" class="btn" type="submit" :disabled="loading">{{ loading ? 'Memproses…' : 'Masuk' }}</button>
         <p class="alt">Belum punya akun? <RouterLink to="/auth/register">Daftar sebagai penghuni</RouterLink></p>

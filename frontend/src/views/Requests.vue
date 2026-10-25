@@ -1,5 +1,4 @@
 <script setup>
-import { useRouter } from 'vue-router'
 import { useRequests } from '../composables/useRequests'
 import { REQ_STEPS, REQ_LABEL } from '../constants'
 import { tgl } from '../utils/format'
@@ -7,14 +6,10 @@ import { auth } from '../auth'
 import ProgressSteps from '../components/ProgressSteps.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import OrderTag from '../components/OrderTag.vue'
+import FormField from '../components/FormField.vue'
+import LoadingState from '../components/LoadingState.vue'
 
-const router = useRouter()
-const { today, list, error, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batalkan, putus } = useRequests()
-
-async function batal(r) {
-  if (confirm('Batalkan permintaan jemput ini?')) await batalkan(r)
-}
-const buatOrder = (r) => router.push({ path: '/order/baru', query: { permintaan: r.id } })
+const { memuat, today, list, error, errors, sukses, loading, form, files, tanggapan, pilih, buang, kirim, batal, putus, buatOrder } = useRequests()
 </script>
 
 <template>
@@ -24,8 +19,12 @@ const buatOrder = (r) => router.push({ path: '/order/baru', query: { permintaan:
     <h2 class="h-sub">Ajukan permintaan jemput</h2>
     <p class="hint">Foto pakaian kotor membantu petugas mencatat kondisi awal, jadi lebih mudah dibuktikan kalau ada barang hilang atau rusak.</p>
     <div class="grid2">
-      <label>Tanggal jemput <input type="date" v-model="form.waktu_jemput" :min="today" required /></label>
-      <label>Isi cucian <input v-model="form.catatan" placeholder="Contoh: 5 kaos, 2 celana, 1 jaket" required /></label>
+      <FormField label="Tanggal jemput" name="waktu_jemput" :error="errors.waktu_jemput" v-slot="{ attrs }">
+        <input type="date" v-model="form.waktu_jemput" :min="today" required v-bind="attrs" />
+      </FormField>
+      <FormField label="Isi cucian" name="catatan" :error="errors.catatan" v-slot="{ attrs }">
+        <input v-model="form.catatan" placeholder="Contoh: 5 kaos, 2 celana, 1 jaket" required v-bind="attrs" />
+      </FormField>
     </div>
     <div>
       <label class="upload">
@@ -46,7 +45,8 @@ const buatOrder = (r) => router.push({ path: '/order/baru', query: { permintaan:
   <p v-else-if="error" class="error">{{ error }}</p>
 
   <h2>{{ auth.isAdmin ? 'Semua permintaan' : 'Permintaan saya' }}</h2>
-  <p v-if="!list.length" class="empty">{{ auth.isAdmin ? 'Belum ada permintaan jemput.' : 'Belum ada permintaan. Ajukan lewat form di atas.' }}</p>
+  <LoadingState :loading="memuat" />
+  <p v-if="!memuat && !list.length" class="empty">{{ auth.isAdmin ? 'Belum ada permintaan jemput.' : 'Belum ada permintaan. Ajukan lewat form di atas.' }}</p>
   <article v-for="r in list" :key="r.id" class="card">
     <div class="row-between">
       <b v-if="auth.isAdmin">{{ r.nama }} · kamar {{ r.kamar }}</b>

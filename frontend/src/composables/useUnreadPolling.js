@@ -7,10 +7,18 @@ const INTERVAL_MS = 20000
 
 export function useUnreadPolling() {
   let timer
+  let gagal = false // log hanya pada kegagalan pertama agar konsol tidak penuh saat offline
 
   async function poll() {
     if (!auth.token) return
-    try { auth.unread = await getUnreadCount() } catch { /* polling gagal tidak perlu mengganggu pengguna */ }
+    try {
+      auth.unread = await getUnreadCount()
+      gagal = false
+    } catch (e) {
+      // Tidak mengganggu pengguna, tapi dicatat sekali supaya masalah tetap bisa dilacak.
+      if (!gagal) console.warn('Polling notifikasi gagal:', e.message)
+      gagal = true
+    }
   }
 
   watch(() => auth.token, (t) => {
