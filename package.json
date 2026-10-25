@@ -1,8 +1,25 @@
 {
-  "name": "ifs24026-pabwe2026-proyek1",
+  "name": "laundrytrack",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "coverage": "cd backend && bun run coverage",
-    "test": "cd backend && npm test"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "test:backend": "cd backend && npm test",
+    "install:backend": "cd backend && npm install"
+  },
+  "dependencies": {
+    "vue": "^3.5.0",
+    "vue-router": "^4.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.1.0",
+    "@vitest/coverage-v8": "5.0.5",
+    "vite": "^5.4.0",
+    "vitest": "5.0.5"
   }
 }
